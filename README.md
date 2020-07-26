@@ -1,1 +1,1 @@
-# 🐦 Twitter clone api source code. 
+# 🐦 Twitter clone source code. 
