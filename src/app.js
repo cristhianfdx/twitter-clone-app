@@ -8,6 +8,9 @@ import Express, { json, urlencoded } from 'express';
 import logger from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
+import passport from 'passport';
+
+import jwtMiddleware from './middlewares/jwt_middleware';
 
 import swagger from './routes/swagger';
 import indexRouter from './routes/index';
@@ -28,6 +31,8 @@ app.use(json());
 app.use(urlencoded({ extended: false }));
 app.use(cors());
 app.use(helmet());
+app.use(passport.initialize());
+passport.use(jwtMiddleware);
 
 // Routes
 app.use('/', swagger);

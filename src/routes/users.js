@@ -3,6 +3,7 @@ import { Router } from 'express';
 import { userService } from '../managers/users.manager';
 import UserController from '../controllers/users.controller';
 import { createUserValidator } from './validators/create-user-validator';
+import { authenticate } from '../middlewares/authenticate';
 
 const router = Router();
 const controller = new UserController(userService);
