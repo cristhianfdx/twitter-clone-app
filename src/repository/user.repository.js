@@ -14,8 +14,16 @@ class UserRepository {
     return await User.findOne({ username });
   }
 
+  async findByEmail(email) {
+    return await User.findOne({ email });
+  }
+
   async findByUsernameOrEmail(username = '', email = '') {
     return await User.findOne({ $or: [{ username }, { email }] });
+  }
+
+  async update(id, user) {
+    return await User.findOneAndUpdate(id, user);
   }
 }
 

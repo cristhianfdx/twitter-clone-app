@@ -50,9 +50,7 @@ userSchema.pre('save', async function (next) {
   if (!user.isModified('password')) return next();
 
   try {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(user.password, salt);
-    user.password = hash;
+    user.password = await encryptPassword(user.password);
     next();
   } catch (error) {
     console.error(error);
@@ -60,8 +58,21 @@ userSchema.pre('save', async function (next) {
   }
 });
 
+userSchema.pre('findOneAndUpdate', async function (next) {
+  const user = this;
+  const update = user.getUpdate();
+  if (!update.password) return next();
+  update.password = await encryptPassword(update.password);
+  next();
+});
+
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
+
+async function encryptPassword(password) {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
+}
 
 export default model('User', userSchema);

@@ -6,28 +6,21 @@ class AuthService {
   constructor(userService) {
     this.userService = userService;
   }
-  async createToken(username, password) {
-    const user = await this.userService.getByUsername(username);
+  async createToken(email, password) {
+    const user = await this.userService.getByEmail(email);
     if (!user) {
       throw new Error('User does not exists.');
     }
     const isMatch = await user.comparePassword(password);
     if (isMatch) {
+      user.password = undefined;
       return this.getGeneratedToken(user);
     }
     throw new Error('Invalid credentials.');
   }
 
   getGeneratedToken(user) {
-    let basicUser;
-    for (const [key, value] of Object.entries(user)) {
-      if (key === '_doc') {
-        basicUser = value;
-        delete basicUser.password;
-      }
-    }
-
-    return jwt.sign({ user: basicUser }, config.JWT_SECRET, {
+    return jwt.sign({ user }, config.JWT_SECRET, {
       algorithm: 'HS256',
       expiresIn: '24h',
     });
