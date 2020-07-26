@@ -15,38 +15,20 @@
       "description": "Local Development"
     }
   ],
-  "tags": [
-    {
-      "name": "Cats",
-      "description": "API for cats in the system"
-    }
-  ],
   "consumes": ["application/json"],
   "produces": ["application/json"],
   "paths": {
-    "/cats": {
-      "get": {
-        "tags": ["Cats"],
-        "summary": "Get all cats in system",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "$ref": "#/definitions/Cats"
-            }
-          }
-        }
-      },
+    "/users": {
       "post": {
-        "tags": ["Cats"],
-        "summary": "Create a new cat in system",
+        "tags": ["Users"],
+        "summary": "Create a new user",
         "requestBody": {
-          "description": "Cat Object",
+          "description": "User Object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/definitions/Cat"
+                "$ref": "#/definitions/User"
               }
             }
           }
@@ -177,10 +159,10 @@
         }
       }
     },
-    "Cat": {
+    "User": {
       "type": "object",
       "properties": {
-        "genus": {
+        "firstName": {
           "type": "string"
         },
         "name": {

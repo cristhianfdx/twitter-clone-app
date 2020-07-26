@@ -6,16 +6,10 @@ services:
     image: mongo
     restart: always
     ports:
-        - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: 6c47w3vyyj5LGhsQ9JFE
-      MONGO_INITDB_ROOT_PASSWORD: WGctfR79cc3ZLVk8jhZK
+      - 27017:27017
 
   mongo-express:
     image: mongo-express
     restart: always
     ports:
       - 8081:8081
-    environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ESRWYTfaB68k9Bt
-      ME_CONFIG_MONGODB_ADMINPASSWORD: 3gM56kw4jsWgZvQM7hFz
