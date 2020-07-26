@@ -16,6 +16,7 @@ import swagger from './routes/swagger';
 import indexRouter from './routes/index';
 import usersRouter from './routes/users';
 import authRouter from './routes/auth';
+import tweetRouter from './routes/tweets';
 
 const app = Express();
 
@@ -39,6 +40,7 @@ app.use('/', swagger);
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/tweets', tweetRouter);
 
 app.use((req, res, next) => {
   res.status(404).json('Not found.');

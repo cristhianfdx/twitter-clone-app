@@ -43,6 +43,7 @@ class UserService {
   async checkUser(id) {
     const isExists = await this.getUser(id);
     if (!isExists) throw new Error('User does not exists.');
+    return isExists;
   }
 }
 

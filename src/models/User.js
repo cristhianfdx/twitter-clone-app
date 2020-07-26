@@ -32,11 +32,14 @@ const userSchema = new Schema({
     lowercase: true,
     trim: true,
   },
-  avatar: { type: String },
-  banner: { type: String },
-  biography: { type: String },
-  location: { type: String },
-  website: { type: String },
+  avatar: String,
+  banner: String,
+  biography: String,
+  location: String,
+  website: String,
+  followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  createdAt: { type: Date, default: Date.now() },
 });
 
 userSchema.pre('save', async function (next) {
