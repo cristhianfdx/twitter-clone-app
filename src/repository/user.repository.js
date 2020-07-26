@@ -6,6 +6,10 @@ class UserRepository {
     return await newUser.save();
   }
 
+  async findAll(page) {
+    return await User.paginate({}, { sort: { createdAt: -1 }, page });
+  }
+
   async findById(id) {
     return await User.findById(id);
   }

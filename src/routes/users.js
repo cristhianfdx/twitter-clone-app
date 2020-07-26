@@ -11,7 +11,11 @@ const controller = new UserController(userService);
 router
   .route('/')
   .post(createUserValidator, (req, res) => controller.create(req, res))
-  .get(authenticate, (req, res) => controller.getByUsername(req, res));
+  .get(authenticate, (req, res) => controller.getAll(req, res));
+
+router.get('/:username', authenticate, (req, res) =>
+  controller.getByUsername(req, res)
+);
 
 router
   .route('/:id')

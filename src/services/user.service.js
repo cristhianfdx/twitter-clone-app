@@ -7,6 +7,14 @@ class UserService {
     return this.userRepository.create(user);
   }
 
+  async getAll(page) {
+    const users = await this.userRepository.findAll(page);
+    users.docs.forEach((user) => {
+      user.password = undefined;
+    });
+    return users;
+  }
+
   async getUser(userId) {
     return await this.userRepository.findById(userId);
   }

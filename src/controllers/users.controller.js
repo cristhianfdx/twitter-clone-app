@@ -17,8 +17,17 @@ class UserController {
     }
   }
 
+  async getAll(req, res) {
+    try {
+      const users = await this.userService.getAll(req.query.page);
+      return res.status(200).json(users);
+    } catch (error) {
+      return res.status(417).json(error.message);
+    }
+  }
+
   async getByUsername(req, res) {
-    const { username } = req.query;
+    const { username } = req.params;
     const user = await this.userService.getByUsername(username);
     if (user) {
       user.password = undefined;
