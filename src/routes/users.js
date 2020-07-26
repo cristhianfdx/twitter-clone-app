@@ -10,11 +10,12 @@ const controller = new UserController(userService);
 
 router
   .route('/')
-  .get(authenticate, (req, res) => controller.getByUsername(req, res))
-  .post(createUserValidator, (req, res) => controller.create(req, res));
+  .post(createUserValidator, (req, res) => controller.create(req, res))
+  .get(authenticate, (req, res) => controller.getByUsername(req, res));
 
 router
   .route('/:id')
-  .patch(authenticate, (req, res) => controller.update(req, res));
+  .patch(authenticate, (req, res) => controller.update(req, res))
+  .delete(authenticate, (req, res) => controller.delete(req, res));
 
 export default router;

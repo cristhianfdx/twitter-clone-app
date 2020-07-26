@@ -25,6 +25,10 @@ class UserRepository {
   async update(id, user) {
     return await User.findOneAndUpdate(id, user);
   }
+
+  async delete(id) {
+    return await User.findOneAndDelete(id);
+  }
 }
 
 export default UserRepository;

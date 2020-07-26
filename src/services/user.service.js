@@ -3,6 +3,7 @@ class UserService {
     this.userRepository = userRepository;
   }
   async create(user) {
+    await this.checkUsernameOrEmail(user.username, user.email);
     return this.userRepository.create(user);
   }
 
@@ -18,24 +19,30 @@ class UserService {
     return await this.userRepository.findByUsername(username);
   }
 
-  async getByUsernameOrEmail(username, email) {
-    return await this.userRepository.findByUsernameOrEmail(username, email);
+  async update(id, user) {
+    await this.checkUser(id);
+    await this.checkUsernameOrEmail(user.username, user.email);
+    return await this.userRepository.update(id, user);
   }
 
-  async update(id, user) {
-    const isExists = await this.getUser(id);
-    const alreadyExists = await this.getByUsernameOrEmail(
-      user.username,
-      user.email
+  async delete(id) {
+    await this.checkUser(id);
+    return await this.userRepository.delete(id);
+  }
+
+  async checkUsernameOrEmail(username, email) {
+    const alreadyExists = await this.userRepository.findByUsernameOrEmail(
+      username,
+      email
     );
 
     if (alreadyExists) {
       throw new Error('Username or email already exists.');
     }
-    if (isExists) {
-      return await this.userRepository.update(id, user);
-    }
-    throw new Error('User does not exists.');
+  }
+  async checkUser(id) {
+    const isExists = await this.getUser(id);
+    if (!isExists) throw new Error('User does not exists.');
   }
 }
 

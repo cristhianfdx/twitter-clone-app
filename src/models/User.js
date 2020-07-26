@@ -37,12 +37,6 @@ const userSchema = new Schema({
   biography: { type: String },
   location: { type: String },
   website: { type: String },
-  tweets: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Tweet',
-    },
-  ],
 });
 
 userSchema.pre('save', async function (next) {
@@ -59,10 +53,9 @@ userSchema.pre('save', async function (next) {
 });
 
 userSchema.pre('findOneAndUpdate', async function (next) {
-  const user = this;
-  const update = user.getUpdate();
-  if (!update.password) return next();
-  update.password = await encryptPassword(update.password);
+  const user = this.getUpdate();
+  if (!user.password) return next();
+  user.password = await encryptPassword(user.password);
   next();
 });
 
