@@ -69,20 +69,6 @@ tweetSchema.methods = {
   },
 };
 
-tweetSchema.statics = {
-  // Load Tweets
-  load: async function (id) {
-    await this.findOne({ _id: id })
-      .populate('user')
-      .populate('comments.user')
-      .execPopulate();
-  },
-  // Get one Tweet
-  tweet: async function (id) {
-    
-  },
-};
-
 tweetSchema.plugin(mongoosePaginate);
 
 export default model('Tweet', tweetSchema);

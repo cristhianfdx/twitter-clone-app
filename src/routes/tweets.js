@@ -7,16 +7,14 @@ import { authenticate } from '../middlewares/authenticate';
 const router = Router();
 const controller = new TweetController(tweetService);
 
-router
-  .route('/')
-  .post(authenticate, (req, res) => controller.create(req, res))
-  .get(authenticate, (req, res) => controller.getAll(req, res));
+router.route('/').get(authenticate, (req, res) => controller.getAll(req, res));
 
 router.get('/:id', authenticate, (req, res) => controller.getOne(req, res));
 
-router.get('/users/:userId', authenticate, (req, res) =>
-  controller.getUserTweets(req, res)
-);
+router
+  .route('/users/:userId')
+  .get(authenticate, (req, res) => controller.getUserTweets(req, res))
+  .post(authenticate, (req, res) => controller.create(req, res));
 
 router.post('/:id/users/:userId', authenticate, (req, res) =>
   controller.likeOrDislikeTweet(req, res)

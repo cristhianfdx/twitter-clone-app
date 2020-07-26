@@ -4,8 +4,12 @@ class TweetController {
   }
 
   async create(req, res) {
+    const tweet = {
+      message: req.body.message,
+      user: req.params.userId,
+    };
     try {
-      await this.tweetService.create(req.body);
+      await this.tweetService.create(tweet);
       res.status(201).json();
     } catch (error) {
       res.status(417).json();

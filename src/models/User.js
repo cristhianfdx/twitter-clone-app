@@ -1,5 +1,8 @@
 import { model, Schema } from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate-v2';
 import * as bcrypt from 'bcrypt';
+
+import Tweet from './Tweet';
 
 const userSchema = new Schema({
   firstName: {
@@ -62,6 +65,13 @@ userSchema.pre('findOneAndUpdate', async function (next) {
   next();
 });
 
+userSchema.pre('deleteOne', async function (next) {
+  const user = this._conditions._id;
+  if (!user) return next();
+  await Tweet.deleteMany({ user });
+  next();
+});
+
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
@@ -70,5 +80,7 @@ async function encryptPassword(password) {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(password, salt);
 }
+
+userSchema.plugin(mongoosePaginate);
 
 export default model('User', userSchema);
