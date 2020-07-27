@@ -53,6 +53,14 @@ class UserService {
     if (!isExists) throw new Error('User does not exists.');
     return isExists;
   }
+
+  async addFollow(currentUser, userId) {
+    await this.checkUser(userId);
+    if (currentUser._id.toString() !== userId) {
+      return await this.userRepository.addFollow(currentUser, userId);
+    }
+    throw new Error('The user cannot follow itself.');
+  }
 }
 
 export default UserService;

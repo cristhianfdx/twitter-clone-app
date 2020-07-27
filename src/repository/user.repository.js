@@ -33,6 +33,10 @@ class UserRepository {
   async delete(id) {
     return await User.deleteOne({ _id: id });
   }
+
+  async addFollow(currentUser, userId) {
+    return await User.addFollow(currentUser, userId);
+  }
 }
 
 export default UserRepository;

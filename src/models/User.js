@@ -81,6 +81,35 @@ async function encryptPassword(password) {
   return await bcrypt.hash(password, salt);
 }
 
+userSchema.statics = {
+  addFollow: async function (currentUser, userId) {
+    const currentId = currentUser._id;
+    const user = await this.findOne({ _id: userId });
+    const currentUsr = await this.findOne({ _id: currentId });
+
+    const indexFollowers = user.followers.indexOf(currentId);
+    const indexFollowing = currentUsr.following.indexOf(userId);
+
+    if (indexFollowers === -1) {
+      user.followers.push(currentId);
+      await this.findOne({ _id: userId }).populate('followers');
+      await this.findOne({ _id: userId }).populate('following');
+    } else {
+      user.followers.splice(indexFollowers, 1);
+    }
+    user.save();
+
+    if (indexFollowing === -1) {
+      currentUsr.following.push(userId);
+      await this.findOne({ _id: currentId }).populate('followers');
+      await this.findOne({ _id: currentId }).populate('following');
+    } else {
+      currentUsr.following.splice(indexFollowing, 1);
+    }
+    currentUsr.save();
+  },
+};
+
 userSchema.plugin(mongoosePaginate);
 
 export default model('User', userSchema);
