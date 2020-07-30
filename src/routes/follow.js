@@ -1,14 +1,16 @@
 import { Router } from 'express';
 
-import { followService } from '../managers/follow.manager';
-import FollowController from '../controllers/follow.controller';
+import followController from '../controllers/follow.controller';
 import { authenticate } from '../middlewares/authenticate';
 
 const router = Router();
-const controller = new FollowController(followService);
+
+router.get('/following', authenticate, followController.getFollowing);
+router.get('/followers', authenticate, followController.getFollowers);
 
 router
-  .route('/:userId')
-  .post(authenticate, (req, res) => controller.addFollow(req, res));
+  .route('/:id')
+  .post(authenticate, followController.addFollow)
+  .delete(authenticate, followController.removeFollow);
 
 export default router;

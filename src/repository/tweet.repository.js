@@ -1,47 +1,45 @@
 import { Types } from 'mongoose';
 import Tweet from '../models/Tweet';
+import Follow from '../models/Follow';
 
-class TweetRepository {
-  async create(tweet) {
+const tweetRepository = {
+  create: async function (tweet) {
     const newTweet = new Tweet(tweet);
     return await newTweet.save();
-  }
+  },
 
-  async likeOrDislikeTweet(id, userId) {
-    const tweet = await this.checkTweet(id);
-    return tweet.likeOrDislikeTweet(tweet, userId);
-  }
-
-  async addComment(id, comment, user) {
-    const tweet = await this.checkTweet(id);
-    return tweet.addComment(comment, user, tweet);
-  }
-
-  async removeComment(id, commentId) {
-    const tweet = await this.checkTweet(id);
-    return tweet.removeComment(commentId, tweet);
-  }
-
-  async userTweets(userId, page) {
+  findAll: async function (params) {
+    const { page, user } = params;
+    const follow = await Follow.findOne({ user });
+    const criteria = [{ user }];
+    if (follow) {
+      follow.followed.forEach((val) => {
+        criteria.push({ user: val });
+      });
+    }
     return await Tweet.paginate(
-      { user: Types.ObjectId(userId) },
+      { $or: criteria },
+      { sort: { createdAt: -1 }, page, populate: { path: 'comments' } }
+    );
+  },
+
+  likeOrDislikeTweet: async function (id, userId) {
+    const tweet = await this.getTweet(id);
+    return tweet.likeOrDislikeTweet(tweet, userId);
+  },
+
+  getTweet: async function (id) {
+    const tweet = await Tweet.findById(id).populate('comments');
+    if (!tweet) throw new Error('Tweet does not exists.');
+    return tweet;
+  },
+
+  getUserTweets: async function (userId, page) {
+    return await Tweet.paginate(
+      { user: userId },
       { sort: { createdAt: -1 }, page }
     );
-  }
+  },
+};
 
-  async checkTweet(id) {
-    const isExists = await this.findById(id);
-    if (!isExists) throw new Error('Tweet does not exists.');
-    return isExists;
-  }
-
-  async findAll(page) {
-    return await Tweet.paginate({}, { sort: { createdAt: -1 }, page });
-  }
-
-  async findById(id) {
-    return await Tweet.findById(id);
-  }
-}
-
-export default TweetRepository;
+export default tweetRepository;

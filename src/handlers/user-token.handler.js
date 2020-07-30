@@ -7,9 +7,8 @@ export function getUserToken(req) {
   const tkt = bearer[1];
   let user;
   jwt.verify(tkt, config.JWT_SECRET, (err, data) => {
-    if (!err) {
-      user = data;
-    }
+    if (err) throw new Error('User does not exists.');
+    user = data;
   });
 
   return user;

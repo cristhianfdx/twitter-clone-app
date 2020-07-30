@@ -4,13 +4,12 @@ if (process.env.NODE_ENV !== 'production') {
   config();
 }
 
-const mongoose = require('mongoose');
-const User = mongoose.model('User');
-import Express, { json, urlencoded } from 'express';
+import express, { json, urlencoded } from 'express';
 import logger from 'morgan';
 import cors from 'cors';
 import helmet from 'helmet';
 import passport from 'passport';
+import path from 'path';
 
 import jwtMiddleware from './middlewares/jwt_middleware';
 
@@ -20,8 +19,9 @@ import usersRouter from './routes/users';
 import authRouter from './routes/auth';
 import tweetRouter from './routes/tweets';
 import followRouter from './routes/follow';
+import commentRouter from './routes/comments';
 
-const app = Express();
+const app = express();
 
 // Database connection
 import './database';
@@ -43,8 +43,12 @@ app.use('/', swagger);
 app.use('/', indexRouter);
 app.use('/api/users', usersRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/tweets', tweetRouter);
 app.use('/api/follow', followRouter);
+app.use('/api/tweets', tweetRouter);
+app.use('/api/comments', commentRouter);
+
+// Static files
+app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
   res.status(404).json('Not found.');

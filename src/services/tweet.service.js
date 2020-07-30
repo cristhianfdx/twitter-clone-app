@@ -1,42 +1,29 @@
-class TweetService {
-  constructor(tweetRepository, userService) {
-    this.tweetRepository = tweetRepository;
-    this.userService = userService;
-  }
+import tweetRepository from '../repository/tweet.repository';
 
-  async create(tweet) {
+const tweetService = {
+  create: async function (tweet) {
     try {
-      return await this.tweetRepository.create(tweet);
+      return await tweetRepository.create(tweet);
     } catch (error) {
       throw new Error('Tweet creation failed');
     }
-  }
+  },
 
-  async likeOrDislikeTweet(id, userId) {
-    await this.userService.checkUser(userId);
-    this.tweetRepository.likeOrDislikeTweet(id, userId);
-  }
+  getAll: async function (params) {
+    return await tweetRepository.findAll(params);
+  },
 
-  async addComment(id, comment, userId) {
-    const user = await this.userService.checkUser(userId);
-    await this.tweetRepository.addComment(id, comment, user);
-  }
+  likeOrDislikeTweet: async function (id, userId) {
+    return await tweetRepository.likeOrDislikeTweet(id, userId);
+  },
 
-  async removeComment(id, commentId) {
-    await this.tweetRepository.removeComment(id, commentId);
-  }
+  getOne: async function (id) {
+    return await tweetRepository.getTweet(id);
+  },
 
-  async getUserTweets(userId, page) {
-    return await this.tweetRepository.userTweets(userId, page);
-  }
+  getUserTweets: async function (userId, page) {
+    return await tweetRepository.getUserTweets(userId, page);
+  },
+};
 
-  async getOne(id) {
-    return await this.tweetRepository.checkTweet(id);
-  }
-
-  async getAll(page) {
-    return await this.tweetRepository.findAll(page);
-  }
-}
-
-export default TweetService;
+export default tweetService;
