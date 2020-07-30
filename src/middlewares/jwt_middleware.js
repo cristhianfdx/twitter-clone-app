@@ -9,7 +9,7 @@ const options = {
 
 export default new Strategy(options, async (payload, done) => {
   try {
-    const user = User.findById(payload.id);
+    const user = User.findOne({ _id: payload.id }).select('-password');
     if (user) {
       return done(null, user);
     }

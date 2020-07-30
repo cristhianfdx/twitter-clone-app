@@ -1,45 +1,35 @@
-class UserService {
-  constructor(userRepository) {
-    this.userRepository = userRepository;
-  }
-  async create(user) {
+import userRepository from '../repository/user.repository';
+
+const userService = {
+  create: async function (user) {
     await this.checkUsernameOrEmail(user.username, user.email);
-    return this.userRepository.create(user);
-  }
+    return userRepository.create(user);
+  },
 
-  async getAll(page) {
-    const users = await this.userRepository.findAll(page);
-    users.docs.forEach((user) => {
-      user.password = undefined;
-    });
-    return users;
-  }
+  getAll: async function (page) {
+    return await userRepository.findAll(page);
+  },
 
-  async getUser(userId) {
-    return await this.userRepository.findById(userId);
-  }
+  getUser: async function (id) {
+    const user = await userRepository.findById(id);
+    if (!user) throw new Error('User does not exists.');
+    return user;
+  },
 
-  async getByEmail(email) {
-    return await this.userRepository.findByEmail(email);
-  }
+  getByUsername: async function (username) {
+    const user = await userRepository.findByUsername(username);
+    if (!user) {
+      throw new Error('User does not exists');
+    }
+    return user;
+  },
 
-  async getByUsername(username) {
-    return await this.userRepository.findByUsername(username);
-  }
+  getByEmail: async function (email) {
+    return await userRepository.findByEmail(email);
+  },
 
-  async update(id, user) {
-    await this.checkUser(id);
-    await this.checkUsernameOrEmail(user.username, user.email);
-    return await this.userRepository.update(id, user);
-  }
-
-  async delete(id) {
-    await this.checkUser(id);
-    return await this.userRepository.delete(id);
-  }
-
-  async checkUsernameOrEmail(username, email) {
-    const alreadyExists = await this.userRepository.findByUsernameOrEmail(
+  checkUsernameOrEmail: async function (username, email) {
+    const alreadyExists = await userRepository.findByUsernameOrEmail(
       username,
       email
     );
@@ -47,12 +37,17 @@ class UserService {
     if (alreadyExists) {
       throw new Error('Username or email already exists.');
     }
-  }
-  async checkUser(id) {
-    const isExists = await this.getUser(id);
-    if (!isExists) throw new Error('User does not exists.');
-    return isExists;
-  }
-}
+  },
 
-export default UserService;
+  async update(id, request) {
+    const { username, email } = request;
+    await this.checkUsernameOrEmail(username, email);
+    return await userRepository.update(id, request);
+  },
+
+  delete: async function (id) {
+    return await userRepository.delete(id);
+  },
+};
+
+export default userService;

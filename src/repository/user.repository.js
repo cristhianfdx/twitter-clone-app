@@ -1,38 +1,45 @@
 import User from '../models/User';
 
-class UserRepository {
-  async create(user) {
+const userRepository = {
+  create: async function (user) {
     const newUser = new User(user);
     return await newUser.save();
-  }
+  },
 
-  async findAll(page) {
-    return await User.paginate({}, { sort: { createdAt: -1 }, page });
-  }
+  findAll: async function (page) {
+    return await User.paginate(
+      {},
+      {
+        sort: { createdAt: -1 },
+        page,
+        select: ['-password'],
+      }
+    );
+  },
 
-  async findById(id) {
+  findById: async function (id) {
     return await User.findById(id);
-  }
+  },
 
-  async findByUsername(username) {
-    return await User.findOne({ username });
-  }
-
-  async findByEmail(email) {
-    return await User.findOne({ email });
-  }
-
-  async findByUsernameOrEmail(username = '', email = '') {
+  findByUsernameOrEmail: async function (username = '', email = '') {
     return await User.findOne({ $or: [{ username }, { email }] });
-  }
+  },
 
-  async update(id, user) {
+  findByUsername: async function (username) {
+    return await User.findOne({ username }).select('-password');
+  },
+
+  findByEmail: async function (email) {
+    return await User.findOne({ email });
+  },
+
+  update: async function (id, user) {
     return await User.findOneAndUpdate(id, user);
-  }
+  },
 
-  async delete(id) {
+  delete: async function (id) {
     return await User.deleteOne({ _id: id });
-  }
-}
+  },
+};
 
-export default UserRepository;
+export default userRepository;

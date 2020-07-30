@@ -1,81 +1,63 @@
-class TweetController {
-  constructor(tweetService) {
-    this.tweetService = tweetService;
-  }
+import tweetService from '../services/tweet.service';
+import { getUserToken } from '../handlers/user-token.handler';
 
-  async create(req, res) {
+const tweetController = {
+  create: async function (req, res) {
+    const { user } = getUserToken(req);
     const tweet = {
       message: req.body.message,
-      user: req.params.userId,
+      user: user._id,
     };
     try {
-      await this.tweetService.create(tweet);
+      await tweetService.create(tweet);
       res.status(201).json();
     } catch (error) {
       res.status(417).json();
     }
-  }
+  },
 
-  async likeOrDislikeTweet(req, res) {
-    const { id, userId } = req.params;
+  getAll: async function (req, res) {
+    const { user } = getUserToken(req);
+    const { page } = req.query.page;
     try {
-      await this.tweetService.likeOrDislikeTweet(id, userId);
+      const tweets = await tweetService.getAll({ page, user });
+      return res.status(200).json(tweets);
+    } catch (error) {
+      return res.status(417).json(error.message);
+    }
+  },
+
+  likeOrDislikeTweet: async function (req, res) {
+    const { id } = req.params;
+    const { user } = getUserToken(req);
+    try {
+      await tweetService.likeOrDislikeTweet(id, user._id);
       return res.status(200).json();
     } catch (error) {
       res.status(417).json(error.message);
     }
-  }
+  },
 
-  async addComment(req, res) {
-    const { id } = req.params;
-    const { comment, userId } = req.body;
-    try {
-      await this.tweetService.addComment(id, comment, userId);
-      return res.status(200).json();
-    } catch (error) {
-      return res.status(417).json(error.message);
-    }
-  }
-
-  async removeComment(req, res) {
-    const { id, commentId } = req.params;
-    try {
-      await this.tweetService.removeComment(id, commentId);
-      return res.status(200).json();
-    } catch (error) {
-      return res.status(417).json(error.message);
-    }
-  }
-
-  async getUserTweets(req, res) {
-    const { userId } = req.params;
-    const { page } = req.query;
-    try {
-      const tweets = await this.tweetService.getUserTweets(userId, page);
-      return res.status(200).json(tweets);
-    } catch (error) {
-      return res.status(417).json(error.message);
-    }
-  }
-
-  async getOne(req, res) {
+  getOne: async function (req, res) {
     const { id } = req.params;
     try {
-      const tweet = await this.tweetService.getOne(id);
+      const tweet = await tweetService.getOne(id);
       return res.status(200).json(tweet);
     } catch (error) {
       return res.status(417).json(error.message);
     }
-  }
+  },
 
-  async getAll(req, res) {
+  getUserTweets: async function (req, res) {
+    const { userId } = req.params;
+    const { page } = req.query;
     try {
-      const tweets = await this.tweetService.getAll(req.query.page);
+      const tweets = await tweetService.getUserTweets(userId, page);
       return res.status(200).json(tweets);
     } catch (error) {
       return res.status(417).json(error.message);
     }
-  }
-}
+  },
+};
 
-export default TweetController;
+export default tweetController;
